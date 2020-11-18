@@ -16,10 +16,17 @@ def get_fact():
 
     return facts[0].getText()
 
-
 @app.route('/')
 def home():
-    return "FILL ME!"
+    response = requests.post("http://hidden-journey-62459.herokuapp.com/piglatinize/", allow_redirects=False, data = {'input_text': get_fact()})
+    pig_latin_url = str(response.headers['Location'])
+    pig_latin_page = requests.get(pig_latin_url)
+    soup = BeautifulSoup(pig_latin_page.content, "html.parser")
+    pig_latin = soup.body.get_text()
+    return f"""
+    <p><a href=\"{pig_latin_url}\">{pig_latin_url}</a><p>
+    <p>{pig_latin}</p>
+    """
 
 
 if __name__ == "__main__":
